@@ -20,7 +20,7 @@ public class LineCasting : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyDown(KeyCode.Alpha1)) {
+		if (_lineTransition == Transition.Nil && Input.GetKeyDown(KeyCode.Alpha1)) {
 			_startTime = Time.time;
 			switch (_lineState) {
 			case State.Down:
