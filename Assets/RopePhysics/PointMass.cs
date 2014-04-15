@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[ExecuteInEditMode]
 public class PointMass : MonoBehaviour {
 	public const float EPSILON = 1e-6f;
 	
@@ -16,30 +17,7 @@ public class PointMass : MonoBehaviour {
 	private bool _kinematic;
 	private Vector3 _prevPosition;
 	private Vector3 _axis;
-
-	void Start() {
-		_ropePhysics = FindObjectOfType<RopePhysics>();
-		_ropePhysics.Add(this);
-		
-		_prevPosition = transform.position;		
-		_axis = _ropePhysics.axis;
-	}
-	void OnDestroy() {
-		_ropePhysics.Remove(this);
-	}
-
-	void OnDrawGizmos() {
-		if (parent != null) {
-			Gizmos.color = Color.green;
-			Gizmos.DrawLine(transform.position, parent.transform.position);
-		}
-	}
-	void OnDrawGizmosSelected() {
-		var pos = transform.position;
-		Gizmos.color = Color.red;
-		Gizmos.DrawLine(pos, 0.5f * restLength * _axis + pos);
-	}
-
+	
 	public float Mass {
 		get { return _mass; }
 		set {
@@ -61,7 +39,7 @@ public class PointMass : MonoBehaviour {
 		}
 	}
 	public Vector3 Axis { get { return _axis; } }
-	
+
 	public void MoveNext(Vector3 accelBySqrTime) {
 		if (_kinematic) {
 			_prevPosition = transform.position;
@@ -86,7 +64,7 @@ public class PointMass : MonoBehaviour {
 		var posMe = transform.position;
 		var dx = posParent - posMe;
 		var sqrLength = dx.sqrMagnitude;
-		if (sqrLength <= 1e-6f)
+		if (sqrLength <= 1e-9f)
 			return;
 		
 		var length = Mathf.Sqrt(sqrLength);
@@ -96,5 +74,28 @@ public class PointMass : MonoBehaviour {
 		transform.position = posMe + dx * _invMass;
 		parent.transform.position = posParent - dx * parent._invMass;
 		transform.rotation = Quaternion.FromToRotation(_ropePhysics.axis, _axis);
+	}
+		
+	void OnEnable() {
+		_ropePhysics = RopePhysics.Instance();
+		_ropePhysics.Add(this);
+		
+		_prevPosition = transform.position;		
+		_axis = _ropePhysics.axis;
+	}
+	void OnDisable() {
+		_ropePhysics.Remove(this);
+	}
+	
+	void OnDrawGizmos() {
+		if (parent != null) {
+			Gizmos.color = Color.green;
+			Gizmos.DrawLine(transform.position, parent.transform.position);
+		}
+	}
+	void OnDrawGizmosSelected() {
+		var pos = transform.position;
+		Gizmos.color = Color.red;
+		Gizmos.DrawLine(pos, 0.5f * restLength * _axis + pos);
 	}
 }
