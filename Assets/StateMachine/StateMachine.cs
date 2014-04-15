@@ -20,14 +20,17 @@ public class StateMachine : MonoBehaviour {
 
 		switch (_transition) {
 		case Transition.Enter:
-			current.Enter(this, current);
+			if (current.Enter != null)
+				current.Enter(this, current);
 			_transition = Transition.Stay;
 			break;
 		case Transition.Stay:
-			current.Stay(this, current);
+			if (current.Stay != null)
+				current.Stay(this, current);
 			break;
 		case Transition.Exit:
-			current.Exit(this, current);
+			if (current.Exit != null)
+				current.Exit(this, current);
 			current = _next;
 			_transition = Transition.Enter;
 			break;
