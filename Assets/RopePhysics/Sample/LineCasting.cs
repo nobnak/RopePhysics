@@ -17,8 +17,7 @@ public class LineCasting : MonoBehaviour {
 	void Start () {
 		_easing = (t) => t * t;
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 		if (_lineTransition == Transition.Nil && Input.GetKeyDown(KeyCode.Alpha1)) {
 			_startTime = Time.time;

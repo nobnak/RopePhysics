@@ -20,31 +20,21 @@ public class LineBoneDeployer : MonoBehaviour {
 			return;
 		build = false;
 
-		var prevPointMasses = GetComponentsInChildren<PointMass>();
-		var bones = new Transform[segmentCount + 1];
-		for (var i = 0; i < prevPointMasses.Length; i++) {
-			if (i < bones.Length)
-				bones[i] = prevPointMasses[i].transform;
-			else
-				DestroyImmediate(prevPointMasses[i].gameObject);
-		}
+		foreach (var pmass in GetComponentsInChildren<PointMass>())
+			DestroyImmediate(pmass.gameObject);
 
 		var segmentLength = length / segmentCount;
 		var pos = transform.position;
+		var bones = new Transform[segmentCount + 1];
 		PointMass parent = null;
 		for (var i = 0; i <= segmentCount; i++) {
-			var bone = bones[i];
-			if (bone == null)
-				bones[i] = bone = new GameObject().transform;
-
+			var bone = bones[i] = new GameObject().transform;
 			bone.name = string.Format("{0:d3}", i);
 			bone.parent = transform;
 			bone.position = pos;
 			pos += segmentLength * direction;
 
-			var pmass = bone.GetComponent<PointMass>();
-			if (pmass == null)
-				pmass = bone.gameObject.AddComponent<PointMass>();
+			var pmass = bone.gameObject.AddComponent<PointMass>();
 			if (i == 0)
 				pmass.Kinematic = true;
 			pmass.parent = parent;
