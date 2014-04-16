@@ -1,4 +1,4 @@
-RopePhysics
+Rope Physics for Unity
 ===========
 [DEMO](http://nobnak.github.io/SceneSamples/RopePhysics/RopePhysics.html)
 
