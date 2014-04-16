@@ -1,3 +1,4 @@
+// Modified for Unity from an implementation (http://goo.gl/y0vuj5) of Penner equations.
 using UnityEngine;
 
 public static class PennerEasing {
