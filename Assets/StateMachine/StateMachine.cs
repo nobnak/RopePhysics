@@ -1,39 +1,47 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class StateMachine : MonoBehaviour {
-	public enum Transition { Enter = 0, Stay, Exit }
+	private Queue<AbstractState> _sequence = new Queue<AbstractState>();
 
-	public State current;
-
-	private Transition _transition;
-	private State _next;
-
-	public void Move(State next) {
-		_next = next;
-		_transition = Transition.Exit;
+	public void Change(AbstractState next) {
+		_sequence.Enqueue(next);
 	}
 
-	void Update () {
-		if (current == null)
-			return;
+	void OnEnable() {
+		StartCoroutine(Process());
+	}
 
-		switch (_transition) {
-		case Transition.Enter:
-			if (current.Enter != null)
-				current.Enter(this, current);
-			_transition = Transition.Stay;
-			break;
-		case Transition.Stay:
-			if (current.Stay != null)
-				current.Stay(this, current);
-			break;
-		case Transition.Exit:
-			if (current.Exit != null)
-				current.Exit(this, current);
-			current = _next;
-			_transition = Transition.Enter;
-			break;
+	IEnumerator Process() {
+		while (enabled) {
+			if (_sequence.Count == 0) {
+				yield return null;
+				continue;
+			}
+			var next = _sequence.Dequeue();
+
+			var iter = next.Enter(this);
+			while (iter.MoveNext())
+				yield return iter.Current;
+
+			while (_sequence.Count == 0) {
+				iter = next.Stay(this);
+				while (iter.MoveNext())
+					yield return iter.Current;
+				yield return null;
+			}
+
+			iter = next.Exit(this);
+			while (iter.MoveNext())
+				yield return iter.Current;
 		}
 	}
+
+	public abstract class AbstractState {
+		public virtual IEnumerator Enter(StateMachine sm) { yield break; }
+		public virtual IEnumerator Stay(StateMachine sm) { yield break; }
+		public virtual IEnumerator Exit(StateMachine sm) { yield break; }
+	}
 }
+
