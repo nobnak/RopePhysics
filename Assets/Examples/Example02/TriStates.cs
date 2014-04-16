@@ -41,7 +41,7 @@ public class TriStates : MonoBehaviour {
 			var tr = sm.transform;
 			var startPos = tr.position;
 			var startTime = Time.time;
-			for (var t = 0f; t <= durationEnter; t = Time.time - startTime) {
+			for (var t = 0f; t < durationEnter; t = Time.time - startTime) {
 				t = PennerEasing.QuadEaseOut(t, 0f, 1f, durationEnter);
 				tr.position = Vector3.Lerp(startPos, targetPos.position, t);
 				yield return null;
@@ -49,10 +49,8 @@ public class TriStates : MonoBehaviour {
 			tr.position = targetPos.position;
 		}
 		public override IEnumerator Stay (StateMachine sm) {
-			if (Input.GetKeyDown(KeyCode.Space)) {
-				sm.Change(nextState);
-				yield break;
-			}
+			yield return new WaitForSeconds(0.5f);
+			sm.Change(nextState);
 		}
 	}
 
@@ -68,7 +66,7 @@ public class TriStates : MonoBehaviour {
 			var tr = sm.transform;
 			var startPos = tr.position;
 			var startTime = Time.time;
-			for (var t = 0f; t <= durationEnter; t = Time.time - startTime) {
+			for (var t = 0f; t < durationEnter; t = Time.time - startTime) {
 				t = PennerEasing.QuadEaseIn(t, 0f, 1f, durationEnter);
 				tr.position = Vector3.Lerp(startPos, targetPos.position, t);
 				yield return null;
@@ -76,10 +74,8 @@ public class TriStates : MonoBehaviour {
 			tr.position = targetPos.position;
 		}
 		public override IEnumerator Stay (StateMachine sm) {
-			if (Input.GetKeyDown(KeyCode.Space)) {
-				sm.Change(nextState);
-				yield break;
-			}
+			yield return new WaitForSeconds(0.5f);
+			sm.Change(nextState);
 		}
 	}
 
