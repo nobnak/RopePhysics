@@ -49,5 +49,12 @@ public class StateMachine : MonoBehaviour {
 		public virtual IEnumerator Stay(StateMachine sm) { yield break; }
 		public virtual IEnumerator Exit(StateMachine sm) { yield break; }
 	}
+	public abstract class AbstractStateBehaviour : MonoBehaviour, IState {
+		#region IState implementation
+		public virtual IEnumerator Enter (StateMachine sm) { yield break; }
+		public virtual IEnumerator Stay (StateMachine sm) { yield break; }
+		public virtual IEnumerator Exit (StateMachine sm) { yield break; }
+		#endregion
+	}
 }
 
