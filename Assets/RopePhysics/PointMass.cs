@@ -17,6 +17,7 @@ public class PointMass : MonoBehaviour {
 	private bool _kinematic;
 	private Vector3 _prevPosition;
 	private Vector3 _axis;
+	private Vector3 _accel;
 	
 	public float Mass {
 		get { return _mass; }
@@ -40,16 +41,22 @@ public class PointMass : MonoBehaviour {
 	}
 	public Vector3 Axis { get { return _axis; } }
 
-	public void MoveNext(Vector3 accelBySqrTime) {
+	public void AddForce(Vector3 f) {
+		_accel += _invMass * f;
+	}
+
+	public void MoveNext(float dt, Vector3 gravity) {
 		if (_kinematic) {
 			_prevPosition = transform.position;
 			return;
 		}
 
+		var accelBySqrTime = (dt * dt) * (_accel + gravity);
 		var curr = transform.position;
 		var v = curr - _prevPosition;
 		var next = curr + _ropePhysics.damping * v + accelBySqrTime;
 		_prevPosition = curr; transform.position = next;
+		_accel = Vector3.zero;
 	}
 	
 	public void SatisfyConstraints() {
@@ -82,6 +89,7 @@ public class PointMass : MonoBehaviour {
 		
 		_prevPosition = transform.position;		
 		_axis = _ropePhysics.axis;
+		_accel = Vector3.zero;
 	}
 	void OnDisable() {
 		_ropePhysics.Remove(this);

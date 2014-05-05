@@ -3,42 +3,56 @@ using System.Collections.Generic;
 
 [ExecuteInEditMode]
 public class RopePhysicsBehaviour : MonoBehaviour {
-	public float timeStep = 1f / 60f;
 	public int constraintIterations = 1;
 	public float damping = 0.99f;
 	public Vector3 axis = Vector3.up;
 	public bool executeInEditor = false;
+	public bool useGravity = true;
 
 	private RopePhysics _physics;
+	private ITimeHelper _timeHelper;
+	private float _timeResidue;
 
 	void OnEnable() {
 		_physics = RopePhysics.Instance();
-		_physics.timeStep = timeStep;
 		_physics.constraintIterations = constraintIterations;
 		_physics.damping = damping;
 		_physics.axis = axis;
+		_physics.useGravity = useGravity;
+		_timeResidue = 0f;
+		_timeHelper = TimeHelper.Create();
+		if (Application.isPlaying)
+			executeInEditor = false;
 	}
 
 	void Update() {
-		if (executeInEditor || Application.isPlaying)
-		_physics.Update();
+		if (executeInEditor) {
+			_timeHelper.Update();
+			var dt = _timeHelper.DeltaTime + _timeResidue;
+			var fixedDelta = Time.fixedDeltaTime;
+			var nSteps = Mathf.FloorToInt(dt / fixedDelta);
+			_timeResidue = dt - nSteps * fixedDelta;
+			for (var i = 0; i < nSteps; i++)
+				_physics.FixedUpdate(fixedDelta);
+		}
+	}
+
+	void FixedUpdate() {
+		_physics.FixedUpdate(Time.fixedDeltaTime);
 	}
 }
 
 public class RopePhysics {
-	public float timeStep = 1f / 60f;
 	public int constraintIterations = 1;
 	public float damping = 0.99f;
 	public Vector3 axis = Vector3.up;
+	public bool useGravity;
 
 	private List<PointMass> _points = new List<PointMass>();
-	private float _timeResidue = 0f;
-	private ITimeHelper _timeHelper;
 
 	private static RopePhysics _instance;
 	
 	public RopePhysics() {
-		_timeHelper = TimeHelper.Create();
 	}
 
 	public static RopePhysics Instance() {
@@ -47,19 +61,13 @@ public class RopePhysics {
 		return _instance;
 	}
 
-	public void Update () {
-		_timeHelper.Update();
-		var gravity = Physics.gravity;
-		var accelBySqrTime = gravity * timeStep * timeStep;
-		var nSteps = CountSteps();
-		for (var i = 0; i < nSteps; i++) {
+	public void FixedUpdate (float dt) {
+		var gravity = (useGravity ? Physics.gravity : Vector3.zero);
+		foreach (var point in _points)
+			point.MoveNext(dt, gravity);
+		for (var j = 0; j < constraintIterations; j++)
 			foreach (var point in _points)
-				point.MoveNext(accelBySqrTime);
-			for (var j = 0; j < constraintIterations; j++) {
-				foreach (var point in _points)
-					point.SatisfyConstraints();
-			}
-		}
+				point.SatisfyConstraints();
 	}
 	
 	public void Add(PointMass pmass) {
@@ -67,13 +75,5 @@ public class RopePhysics {
 	}
 	public void Remove(PointMass pmass) {
 		_points.Remove(pmass);
-	}
-
-	int CountSteps() {
-		var dt = _timeHelper.DeltaTime;
-		var elapsed = dt + _timeResidue;
-		var nSteps = Mathf.FloorToInt(elapsed / timeStep);
-		_timeResidue = elapsed - nSteps * timeStep;
-		return nSteps;
 	}
 }
