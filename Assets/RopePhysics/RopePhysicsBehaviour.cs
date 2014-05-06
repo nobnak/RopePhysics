@@ -20,13 +20,14 @@ public class RopePhysicsBehaviour : MonoBehaviour {
 		_physics.axis = axis;
 		_physics.useGravity = useGravity;
 		_timeResidue = 0f;
-		_timeHelper = TimeHelper.Create();
 		if (Application.isPlaying)
 			executeInEditor = false;
 	}
 
 	void Update() {
 		if (executeInEditor) {
+			if (_timeHelper == null)
+				_timeHelper = TimeHelper.Create();
 			_timeHelper.Update();
 			var dt = _timeHelper.DeltaTime + _timeResidue;
 			var fixedDelta = Time.fixedDeltaTime;
@@ -34,6 +35,8 @@ public class RopePhysicsBehaviour : MonoBehaviour {
 			_timeResidue = dt - nSteps * fixedDelta;
 			for (var i = 0; i < nSteps; i++)
 				_physics.FixedUpdate(fixedDelta);
+		} else {
+			_timeHelper = null;
 		}
 	}
 
