@@ -45,13 +45,18 @@ public class RopePhysicsBehaviour : MonoBehaviour {
 	}
 }
 
+public interface IPointMass {
+	void MoveNext(float dt, Vector3 gravity);
+	void SatisfyConstraints();
+}
+
 public class RopePhysics {
 	public int constraintIterations = 1;
 	public float damping = 0.99f;
 	public Vector3 axis = Vector3.up;
 	public bool useGravity;
 
-	private List<PointMass> _points = new List<PointMass>();
+	private List<IPointMass> _points = new List<IPointMass>();
 
 	private static RopePhysics _instance;
 	
@@ -73,10 +78,10 @@ public class RopePhysics {
 				point.SatisfyConstraints();
 	}
 	
-	public void Add(PointMass pmass) {
+	public void Add(IPointMass pmass) {
 		_points.Add(pmass);
 	}
-	public void Remove(PointMass pmass) {
+	public void Remove(IPointMass pmass) {
 		_points.Remove(pmass);
 	}
 }
