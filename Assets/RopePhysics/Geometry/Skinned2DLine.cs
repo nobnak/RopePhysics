@@ -8,7 +8,6 @@ public class Skinned2DLine : MonoBehaviour {
 	public Vector3 axis = Vector3.right;
 	[HideInInspector]
 	public Transform[] bones;
-	public Bounds bounds = new Bounds(Vector3.zero, 1e3f * Vector3.one);
 
 	public void Build() {
 		var halfwidth = 0.5f * width;
@@ -47,6 +46,10 @@ public class Skinned2DLine : MonoBehaviour {
 		var skin = GetComponent<SkinnedMeshRenderer>();
 		if (skin == null)
 			skin = gameObject.AddComponent<SkinnedMeshRenderer>();
+
+		var bounds = new Bounds();
+		foreach (var bone in bones)
+			bounds.Encapsulate(bone.transform.localPosition);
 
 		var mesh = skin.sharedMesh;
 		if (mesh == null)

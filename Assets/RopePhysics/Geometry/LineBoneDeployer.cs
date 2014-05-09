@@ -9,6 +9,7 @@ public class LineBoneDeployer : MonoBehaviour {
 	public int segmentCount = 40;
 	public float segmentMass = 1f;
 	public Vector3 direction = Vector3.down;
+	public PointMass[] line;
 
 	void Start() {
 		if (Application.isPlaying)
@@ -27,6 +28,7 @@ public class LineBoneDeployer : MonoBehaviour {
 		var pos = transform.position;
 		var bones = new Transform[segmentCount + 1];
 		PointMass parent = null;
+		line = new PointMass[segmentCount + 1];
 		for (var i = 0; i <= segmentCount; i++) {
 			var bone = bones[i] = new GameObject().transform;
 			bone.name = string.Format("{0:d3}", i);
@@ -35,6 +37,7 @@ public class LineBoneDeployer : MonoBehaviour {
 			pos += segmentLength * direction;
 
 			var pmass = bone.gameObject.AddComponent<PointMass>();
+			line[i] = pmass;
 			if (i == 0)
 				pmass.Kinematic = true;
 			pmass.parent = parent;

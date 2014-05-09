@@ -3,7 +3,7 @@ using System.Collections;
 
 [ExecuteInEditMode]
 public class PointMass : MonoBehaviour, IPointMass {
-	public const float EPSILON = 1e-6f;
+	public const float EPSILON = 1e-3f;
 	
 	public PointMass parent;
 	public float restLength;
@@ -70,12 +70,12 @@ public class PointMass : MonoBehaviour, IPointMass {
 		var posParent = parent.transform.position;
 		var posMe = transform.position;
 		var dx = posParent - posMe;
-		var sqrLength = dx.sqrMagnitude;
-		if (sqrLength <= 1e-9f)
-			return;
-		
-		var length = Mathf.Sqrt(sqrLength);
-		_axis = dx / length;
+		var length = dx.magnitude;
+		if (length <= EPSILON) {
+			_axis = EPSILON * Random.onUnitSphere;
+		} else {
+			_axis = dx / length;
+		}
 
 		dx = (length - restLength) / (totalInvMass) * _axis;
 		transform.position = posMe + dx * _invMass;
