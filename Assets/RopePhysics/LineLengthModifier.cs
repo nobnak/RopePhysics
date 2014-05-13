@@ -12,6 +12,7 @@ public class LineLengthModifier : MonoBehaviour {
 
 	void Start() {
 		_deployer = GetComponent<LineBoneDeployer>();
+		length = _deployer.length;
 	}
 
 	public void Update () {

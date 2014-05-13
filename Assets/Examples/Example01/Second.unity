@@ -209,7 +209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4751c5ed1cee49f2bc2d81dbeab8814, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  title: Rope with Physx
+  title: Verlet-based Physics
   width: 150
 --- !u!1 &413181734
 GameObject:
@@ -318,7 +318,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 480978095}
-  m_LocalRotation: {x: 0, y: 0, z: .962985933, w: .269551635}
+  m_LocalRotation: {x: 0, y: 0, z: .962985992, w: .269551665}
   m_LocalPosition: {x: 3.02493882, y: 8.28629684, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -2905,7 +2905,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1413764275}
-  m_LocalRotation: {x: 0, y: 0, z: .991105735, w: .133076668}
+  m_LocalRotation: {x: 0, y: 0, z: .991105795, w: .133076683}
   m_LocalPosition: {x: .71737957, y: 3.15757179, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -3035,7 +3035,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1550716471}
-  m_LocalRotation: {x: 0, y: 0, z: .984504521, w: .175359145}
+  m_LocalRotation: {x: 0, y: 0, z: .98450458, w: .17535916}
   m_LocalPosition: {x: 1.13991106, y: 4.45812798, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -3078,7 +3078,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1560632202}
-  m_LocalRotation: {x: 0, y: 0, z: .994309008, w: .106534377}
+  m_LocalRotation: {x: 0, y: 0, z: .994309068, w: .106534384}
   m_LocalPosition: {x: .0529640391, y: .244325638, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -3500,6 +3500,7 @@ MonoBehaviour:
   segmentCount: 40
   segmentMass: 1
   direction: {x: 0, y: -1, z: 0}
+  line: []
 --- !u!114 &1844124520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3556,9 +3557,6 @@ MonoBehaviour:
   - {fileID: 1306027780}
   - {fileID: 590047174}
   - {fileID: 1443469176}
-  bounds:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 500, y: 500, z: 500}
 --- !u!1 &1849093057
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,13 +8,11 @@ public class Canon : MonoBehaviour {
 
 	private GravitationalCurve _curve;
 
-	void Update () {
-		if (_curve == null && Input.GetMouseButtonDown(0)) {
-			StartCoroutine(Shoot());
-		}
+	public void Shoot() {
+		StartCoroutine(Shooting());
 	}
 
-	IEnumerator Shoot() {
+	IEnumerator Shooting() {
 		_curve = new GravitationalCurve(transform.position, destination.position, duration, Physics.gravity);
 		foreach (var p in _curve.Go()) {
 			bullet.position = p;
