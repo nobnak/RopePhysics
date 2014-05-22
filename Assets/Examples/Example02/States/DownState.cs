@@ -1,30 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DownState : MonoBehaviour {
+public class DownState : TriStates.State {
 	public Transform targetPos;
 	public float durationEnter = 1f;
-	[HideInInspector]
-	public MonoBehaviour nextState;
 
 	void OnEnable() {
 		StartCoroutine(Play());
 	}
 
 	IEnumerator Play() {
-		var sm = GetComponent<StateMachine>();
-
-		var tr = sm.transform;
-		var startPos = tr.position;
+		yield return null;
+		var startPos = transform.position;
 		var startTime = Time.time;
 		for (var t = 0f; t < durationEnter; t = Time.time - startTime) {
 			t = PennerEasing.QuadEaseIn(t, 0f, 1f, durationEnter);
-			tr.position = Vector3.Lerp(startPos, targetPos.position, t);
+			transform.position = Vector3.Lerp(startPos, targetPos.position, t);
 			yield return null;
 		}
-		tr.position = targetPos.position;
+		transform.position = targetPos.position;
 
 		yield return new WaitForSeconds(0.5f);
-		sm.Change(nextState);
+		Parent.fsm.Enqueue(Parent.states.initState);
+		Parent.fsm.Next();
 	}
 }

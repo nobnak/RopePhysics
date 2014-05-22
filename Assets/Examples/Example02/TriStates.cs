@@ -2,24 +2,30 @@
 using System.Collections;
 
 public class TriStates : MonoBehaviour {
-	public InitState initState;
-	public DownState downState;
-
-	private StateMachine _fsm;
-
-	void Awake() {
-		initState.nextState = downState;
-		downState.nextState = initState;
-	}
+	public States states;
+	public StateMachine fsm;
 
 	void OnEnable () {
-		_fsm = GetComponent<StateMachine>();
-		_fsm.Change(initState);
+		fsm = GetComponent<StateMachine>();
+		fsm.Enqueue(states.downState);
+		fsm.Next();
 	}
 
-	void Update () {
-	
+	[System.Serializable]
+	public class States {
+		public InitState initState;
+		public DownState downState;
 	}
 
+	public class State : MonoBehaviour {
+		private TriStates _parent;
 
+		public TriStates Parent {
+			get {
+				if (_parent == null)
+					_parent = GetComponent<TriStates>();
+				return _parent;
+			}
+		}
+	}
 }
