@@ -16,6 +16,14 @@ public static class PennerEasing {
 	    BackEaseOut, BackEaseIn, BackEaseInOut, BackEaseOutIn
 	}
 
+	public delegate float EaseFunc(float t, float b, float c, float d);
+	public static System.Collections.Generic.IEnumerable<float> Go(EaseFunc f, float duration) {
+		var startTime = Time.timeSinceLevelLoad;
+		for (var t = 0f; t < duration; t = (Time.timeSinceLevelLoad - startTime))
+			yield return f(t, 0f, 1f, duration);
+		yield return 1f;
+	}
+
 	#region Equations
 
 	// These methods are all public to enable reflection in GetCurrentValueCore.
