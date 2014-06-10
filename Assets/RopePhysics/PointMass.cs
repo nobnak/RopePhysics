@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 [ExecuteInEditMode]
-public class PointMass : MonoBehaviour, IPoint {
+public class PointMass :  Point {
 	public const float EPSILON = 1e-3f;
 	
 	public PointMass parent;
@@ -19,8 +19,6 @@ public class PointMass : MonoBehaviour, IPoint {
 	private Vector3 _axis;
 	private Vector3 _accel;
 
-	public IPoint Parent { get { return parent; } }
-	
 	public float Mass {
 		get { return _mass; }
 		set {
@@ -47,7 +45,8 @@ public class PointMass : MonoBehaviour, IPoint {
 		_accel += _invMass * f;
 	}
 
-	public void MoveNext(float dt, Vector3 gravity) {
+	public override Point Parent { get { return parent; } }
+	public override void MoveNext(float dt, Vector3 gravity) {
 		if (_kinematic) {
 			_prevPosition = transform.position;
 			return;
@@ -61,7 +60,7 @@ public class PointMass : MonoBehaviour, IPoint {
 		_accel = Vector3.zero;
 	}
 	
-	public void SatisfyConstraints() {
+	public override void SatisfyConstraints() {
 		if (parent == null)
 			return;
 		

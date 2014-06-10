@@ -33,6 +33,8 @@ public class RopePhysicsBehaviour : MonoBehaviour {
 			var fixedDelta = Time.fixedDeltaTime;
 			var nSteps = Mathf.FloorToInt(dt / fixedDelta);
 			_timeResidue = dt - nSteps * fixedDelta;
+
+			nSteps = Mathf.Min(100, nSteps);
 			for (var i = 0; i < nSteps; i++)
 				_physics.FixedUpdate(fixedDelta);
 		} else {
@@ -45,10 +47,10 @@ public class RopePhysicsBehaviour : MonoBehaviour {
 	}
 }
 
-public interface IPoint {
-	IPoint Parent { get; }
-	void MoveNext(float dt, Vector3 gravity);
-	void SatisfyConstraints();
+public abstract class Point : MonoBehaviour {
+	public abstract Point Parent { get; }
+	public abstract void MoveNext(float dt, Vector3 gravity);
+	public abstract void SatisfyConstraints();
 }
 
 public class RopePhysics {
@@ -57,10 +59,9 @@ public class RopePhysics {
 	public Vector3 axis = Vector3.up;
 	public bool useGravity;
 
-	private List<IPoint> _points = new List<IPoint>();
-	private List<IPoint> _tips = new List<IPoint>();
-	private Dictionary<IPoint, IPoint> _parent2child = new Dictionary<IPoint, IPoint>();
-	private bool _changed = false;
+	private List<Point> _points = new List<Point>();
+	private List<Point> _roots = new List<Point>();
+	private bool _pointsChanged = true;
 
 	private static RopePhysics _instance;
 	
@@ -77,40 +78,17 @@ public class RopePhysics {
 		var gravity = (useGravity ? Physics.gravity : Vector3.zero);
 		foreach (var point in _points)
 			point.MoveNext(dt, gravity);
-
-		UpdateTips();
-		Debug.Log("Num of tips : " + _tips.Count);
-		for (var j = 0; j < constraintIterations; j++) {
-			foreach (var tip in _tips) {
-				var child = tip;
-				while (child.Parent != null) {
-					child.SatisfyConstraints();
-					child = child.Parent;
-				}
-			}
-		}
+		for (var j = 0; j < constraintIterations; j++)
+			foreach (var point in _points)
+				point.SatisfyConstraints();
 	}
-	public void UpdateTips() {
-		if (!_changed)
-			return;
-		_changed = false;
-
-		_tips.Clear();
-		foreach (var p in _points) {
-			if (!_parent2child.ContainsKey(p))
-				_tips.Add(p);
-		}
-	}
-	public void Add(IPoint pmass) {
-		_changed = true;
+	
+	public void Add(Point pmass) {
+		_pointsChanged = true;
 		_points.Add(pmass);
-		if (pmass.Parent != null)
-			_parent2child.Add(pmass.Parent, pmass);
 	}
-	public void Remove(IPoint pmass) {
-		_changed = true;
+	public void Remove(Point pmass) {
+		_pointsChanged = true;
 		_points.Remove(pmass);
-		if (pmass.Parent != null)
-			_parent2child.Remove(pmass.Parent);
 	}
 }

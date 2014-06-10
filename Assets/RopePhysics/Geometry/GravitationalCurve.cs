@@ -26,4 +26,25 @@ public class GravitationalCurve {
 		}
 		yield return _xt;
 	}
+	
+	public IEnumerable<Vector3> GoBackward() {
+		var endTime = Time.timeSinceLevelLoad + _duration;
+		var t = _duration;
+		while (0 < t) {
+			yield return _x0 + t * _v + (0.5f * t * t) * _g;
+			t = (endTime - Time.timeSinceLevelLoad);
+		}
+		yield return _x0;
+	}
+	
+	public IEnumerable<Vector4> GoWithTime() {
+		var startTime = Time.timeSinceLevelLoad;
+		var t = 0f;
+		while (t < _duration) {
+			var x = _x0 + t * _v + (0.5f * t * t) * _g;
+			yield return new Vector4(x.x, x.y, x.z, t);
+			t = (Time.timeSinceLevelLoad - startTime);
+		}
+		yield return new Vector4(_xt.x, _xt.y, _xt.z, _duration);
+	}
 }

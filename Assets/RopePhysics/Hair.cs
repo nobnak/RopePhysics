@@ -2,10 +2,10 @@
 using System.Collections;
 
 [ExecuteInEditMode]
-public class Point : MonoBehaviour, IPoint {
+public class Hair : Point {
 	public const float EPSILON = 1e-3f;
 	
-	public Point parent;
+	public Hair parent;
 	public float restLength;
 
 	private RopePhysics _ropePhysics;
@@ -15,7 +15,6 @@ public class Point : MonoBehaviour, IPoint {
 	private Vector3 _axis;
 	private Vector3 _accel;
 
-	public IPoint Parent { get { return parent; } }
 	public bool Kinematic {
 		get { return _kinematic; }
 		set { _kinematic = value; }
@@ -26,7 +25,8 @@ public class Point : MonoBehaviour, IPoint {
 		_accel += accel;
 	}
 
-	public void MoveNext(float dt, Vector3 gravity) {
+	public override Point Parent { get { return parent; } }
+	public override void MoveNext(float dt, Vector3 gravity) {
 		if (_kinematic) {
 			_prevPosition = transform.position;
 			return;
@@ -40,7 +40,7 @@ public class Point : MonoBehaviour, IPoint {
 		_accel = Vector3.zero;
 	}
 	
-	public void SatisfyConstraints() {
+	public override void SatisfyConstraints() {
 		if (parent == null)
 			return;
 
