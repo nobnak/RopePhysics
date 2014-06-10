@@ -59,6 +59,8 @@ public class RopePhysics {
 
 	private List<IPoint> _points = new List<IPoint>();
 	private List<IPoint> _tips = new List<IPoint>();
+	private Dictionary<IPoint, IPoint> _parent2child = new Dictionary<IPoint, IPoint>();
+	private bool _changed = false;
 
 	private static RopePhysics _instance;
 	
@@ -75,15 +77,35 @@ public class RopePhysics {
 		var gravity = (useGravity ? Physics.gravity : Vector3.zero);
 		foreach (var point in _points)
 			point.MoveNext(dt, gravity);
-		for (var j = 0; j < constraintIterations; j++)
-			foreach (var point in _points)
-				point.SatisfyConstraints();
+
+		UpdateTips();
+		for (var j = 0; j < constraintIterations; j++) {
+			foreach (var tip in _tips) {
+				var child = tip;
+				while (child.Parent != null) {
+					child.SatisfyConstraints();
+					child = child.Parent;
+				}
+			}
+		}
 	}
-	
+	public void UpdateTips() {
+		if (!_changed)
+			return;
+		_changed = false;
+
+		_tips.Clear();
+		foreach (var p in _points) {
+			if (!_parent2child.ContainsKey(p))
+				_tips.Add(p);
+		}
+	}
 	public void Add(IPoint pmass) {
+		_changed = true;
 		_points.Add(pmass);
 	}
 	public void Remove(IPoint pmass) {
+		_changed = true;
 		_points.Remove(pmass);
 	}
 }
