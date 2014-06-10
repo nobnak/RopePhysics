@@ -45,7 +45,8 @@ public class RopePhysicsBehaviour : MonoBehaviour {
 	}
 }
 
-public interface IPointMass {
+public interface IPoint {
+	IPoint Parent { get; }
 	void MoveNext(float dt, Vector3 gravity);
 	void SatisfyConstraints();
 }
@@ -56,7 +57,8 @@ public class RopePhysics {
 	public Vector3 axis = Vector3.up;
 	public bool useGravity;
 
-	private List<IPointMass> _points = new List<IPointMass>();
+	private List<IPoint> _points = new List<IPoint>();
+	private List<IPoint> _tips = new List<IPoint>();
 
 	private static RopePhysics _instance;
 	
@@ -78,10 +80,10 @@ public class RopePhysics {
 				point.SatisfyConstraints();
 	}
 	
-	public void Add(IPointMass pmass) {
+	public void Add(IPoint pmass) {
 		_points.Add(pmass);
 	}
-	public void Remove(IPointMass pmass) {
+	public void Remove(IPoint pmass) {
 		_points.Remove(pmass);
 	}
 }

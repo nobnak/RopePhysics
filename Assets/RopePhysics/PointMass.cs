@@ -2,7 +2,7 @@
 using System.Collections;
 
 [ExecuteInEditMode]
-public class PointMass : MonoBehaviour, IPointMass {
+public class PointMass : MonoBehaviour, IPoint {
 	public const float EPSILON = 1e-3f;
 	
 	public PointMass parent;
@@ -18,6 +18,8 @@ public class PointMass : MonoBehaviour, IPointMass {
 	private Vector3 _prevPosition;
 	private Vector3 _axis;
 	private Vector3 _accel;
+
+	public IPoint Parent { get { return parent; } }
 	
 	public float Mass {
 		get { return _mass; }
