@@ -79,6 +79,7 @@ public class RopePhysics {
 			point.MoveNext(dt, gravity);
 
 		UpdateTips();
+		Debug.Log("Num of tips : " + _tips.Count);
 		for (var j = 0; j < constraintIterations; j++) {
 			foreach (var tip in _tips) {
 				var child = tip;
@@ -103,9 +104,13 @@ public class RopePhysics {
 	public void Add(IPoint pmass) {
 		_changed = true;
 		_points.Add(pmass);
+		if (pmass.Parent != null)
+			_parent2child.Add(pmass.Parent, pmass);
 	}
 	public void Remove(IPoint pmass) {
 		_changed = true;
 		_points.Remove(pmass);
+		if (pmass.Parent != null)
+			_parent2child.Remove(pmass.Parent);
 	}
 }
