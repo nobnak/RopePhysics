@@ -4,14 +4,21 @@ using System.Collections;
 [ExecuteInEditMode]
 [RequireComponent(typeof(Rigidbody))]
 public class RigidbodyLink : MonoBehaviour {
-	public Hair link;
-	public float k;
+	public PointMass link;
+	public float kp;
+	public float ki;
+	public float kd;
+
+	private Vector3 _accumDx = Vector3.zero;
+	private Vector3 _prevDx = Vector3.zero;
 
 	void FixedUpdate() {
-		var toLink = link.transform.position - rigidbody.position;
-		var f = k * toLink;
-		var a = f / rigidbody.mass;
-		link.AddAccel(-a);
-		rigidbody.AddForce(a, ForceMode.Acceleration);
+		var dx = link.transform.position - rigidbody.position;
+		var ddx = (dx - _prevDx) / Time.fixedDeltaTime;
+		_accumDx = 0.99f * _accumDx + dx;
+		_prevDx = dx;
+		var f = kp * dx + ki * _accumDx + kd * ddx;
+		link.AddForce(-f);
+		rigidbody.AddForce(f);
 	}
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 [ExecuteInEditMode]
-public class PointMass :  Point {
+public class PointMass : Point {
 	public const float EPSILON = 1e-3f;
 	
 	public PointMass parent;
@@ -82,6 +82,13 @@ public class PointMass :  Point {
 		transform.position = posMe + dx * _invMass;
 		parent.transform.position = posParent - dx * parent._invMass;
 		transform.rotation = Quaternion.FromToRotation(_ropePhysics.axis, _axis);
+	}
+	public override float SqrError () {
+		if (parent == null)
+			return 0f;
+		var length = (parent.transform.position - transform.position).magnitude;
+		var dx = (restLength - length);
+		return dx * dx;
 	}
 		
 	void OnEnable() {
