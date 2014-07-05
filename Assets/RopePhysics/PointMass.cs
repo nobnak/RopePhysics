@@ -85,6 +85,13 @@ public class PointMass : Point {
 		transform.rotation = Quaternion.FromToRotation(_ropePhysics.axis, _axis);
 		return error * error;
 	}
+	public override float SqrError () {
+		if (parent == null)
+			return 0f;
+		var length = (parent.transform.position - transform.position).magnitude;
+		var dx = (restLength - length);
+		return dx * dx;
+	}
 		
 	void OnEnable() {
 		_ropePhysics = RopePhysics.Instance();

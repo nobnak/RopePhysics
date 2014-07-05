@@ -6,8 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Examples/Example01/Second.unity
+  - enabled: 1
     path: Assets/Examples/Example01/First.unity
   - enabled: 1
-    path: Assets/Examples/Example02/TriStates.unity
-  - enabled: 1
     path: Assets/Examples/Example01/Third.unity
+  - enabled: 1
+    path: Assets/Examples/Example01/Fourth.unity
